@@ -1,0 +1,105 @@
+body {
+    font-family: Roboto,Helvetica Neue,Arial,sans-serif;
+    font-size: 14px;
+    width: 1440px;
+    margin: auto;
+    color: #aaa;
+    background-color: #222;
+}
+
+table	{
+	border: 1px solid #777;
+	border-collapse: collapse;
+	padding: 0px 4px;
+	width: 100%;
+	position: relative;
+}
+
+tbody tr:hover {
+	background-color: #444;
+}
+
+th[data-sorter] {
+	cursor: pointer;
+}
+
+th	{
+	position: sticky;
+	top: 0px;
+}
+
+#gamestabdiv	{
+	overflow-y: scroll;
+	height:400px;
+	width: 800px;
+	float: left;
+}
+
+th,td {
+    border: 1px solid #777;
+    border-collapse: collapse;
+    padding: 0px 4px;
+}
+
+#gamestab td {
+	text-align: right;
+}
+
+#gamestab tbody tr {
+	cursor: pointer;
+}
+
+#gamestab th {
+	padding: 0px 10px;
+	background-color: #444;
+}
+
+#gamestab th:nth-child(1)	{
+	text-align: left;
+	padding-left: 4px;
+}
+#gamestab td:nth-child(1)	{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 350px;
+	text-align: left;
+}
+
+#gamestab input[type="checkbox"]	{
+	height: 12px;
+}
+
+#gamestab input[type="text"]	{
+	height: 12px;
+}
+
+.floatleft	{
+	float: left;
+}
+
+.seltab {
+	float: left;
+	padding-left: 20px;
+}
+
+.subseldiv	{
+	float: left;
+	padding-left: 20px;
+	overflow-y: scroll;
+	height:200px;
+}
+
+.subseldiv td:nth-child(2)	{
+	text-align: right;
+}
+
+#country th,#languages th	{
+	padding: 0px 7px;
+	background-color: #444;
+	cursor: pointer;
+}
+
+.subseldiv input {
+	height: 12px;
+}
