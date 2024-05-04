@@ -1,0 +1,50 @@
+<!doctype html>
+<html itemscope="" itemtype="http://schema.org/WebPage" lang="ru">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>xboxstat.ru/global statistics</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.png" />
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="/d3.v7.min.js"></script>
+    <script src="scripts.js"></script>
+</head>
+<body onload="main()">
+	<div>Total Gamers</div>
+	<div id="gamestabdiv">
+		<table id="gamestab">
+			<thead>
+				<th data-sorter="nameSorter">
+					<input type="checkbox" title="Clear selection" />
+					Game Filter: <input type="text" size="20" maxlength="40" id="namefilter" />
+				</th>
+				<th data-sorter="playerSorter">Players</th>
+				<th>Percentage</th>
+				<th>Countries</th>
+				<th>Langs</th>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<div style="height: 400px">
+	</div>
+	
+	<div id="country">
+		<div id="countrygraph" class="floatleft">
+			<svg width="800px" height="200px" style="background-color: #444">
+			</svg>
+		</div>
+		<div id="countryseldiv"></div>
+	</div>
+
+	<div id="languages">
+		<div id="langgraph" class="floatleft">
+			<svg width="800px" height="200px" style="background-color: #444">
+			</svg>
+		</div>
+		<div id="langseldiv"></div>
+	</div>
+</body>
+</html>
+
+
