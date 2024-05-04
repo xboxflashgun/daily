@@ -30,9 +30,13 @@ th	{
 
 #gamestabdiv	{
 	overflow-y: scroll;
-	height:400px;
-	width: 800px;
+	height:300px;
+	width: 1100px;
 	float: left;
+}
+
+#gamestabskipper	{
+	height: 300px;
 }
 
 th,td {
@@ -80,7 +84,10 @@ th,td {
 
 .seltab {
 	float: left;
-	padding-left: 20px;
+}
+
+.seltab	th	{
+	width: 100px;
 }
 
 .subseldiv	{
@@ -95,11 +102,33 @@ th,td {
 }
 
 #country th,#languages th	{
-	padding: 0px 7px;
-	background-color: #444;
 	cursor: pointer;
+	color: #ccc;
 }
 
 .subseldiv input {
 	height: 12px;
 }
+
+svg	{
+	width: 938px;
+	height: 200px;
+	background-color: #123;
+}
+
+.selheader	{
+	padding-left: 50px;
+	font-size: 16px;
+	color: #ccc;
+	background-color: #424;
+}
+
+.thadd th	{
+	background-color: #272;
+}
+
+.thdel th	{
+	background-color: #822;
+}
+
+

@@ -101,7 +101,7 @@ var lcbox = {};		// lcnames[lang/country][add/del]['ru'] = 1/undef
 
 function makesubselecters(sel, what, name, div)	{
 
-	var tab = div.append('div').classed("subseldiv", true).append('table').attr("id", sel + what + "tab");
+	var tab = div.append('div').classed("subseldiv", true).append('table').attr("id", sel + what + "tab").classed("th" + what, true);
 	var th = tab.append('thead');
 	th.append('th').attr("data-sort", "0").text(name);
 	th.append('th').attr("data-sort", "1").text('Players');
@@ -127,7 +127,7 @@ function selecters(sel)	{
 	var div = d3.select("#" + sel + "seldiv");
 	if( div.select('input').empty() )	{	// create block
 		div.classed('seltab', true);
-		var header = div.append('div');
+		var header = div.append('div').classed("selheader", true);
 		header.append('input').attr('type', 'radio').attr('name', sel+'radio');
 		header.append('span').text('Absolute');
 		header.append('input').attr('type', 'radio').attr('name', sel+'radio');
