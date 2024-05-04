@@ -41,8 +41,8 @@ function getmaintable()	{
 
 	global $rows, $db;
 
-	$req = makewhere2();
-	$req = str_replace("titleid", "null", $req);
+	$req = makewhere2("titleid is not null");
+	error_log($req);
 
 	if(isset($_GET['utime']))
 		$subreq = "
@@ -168,10 +168,8 @@ function makewhere1()	{
 
 }
 
-function makewhere2()	{
+function makewhere2($req)	{
 
-	$req = makewhere1();
-	
 	if(isset($_GET['utime']))
 		$req .= " and utime=" . $_GET['utime'];
 
@@ -217,7 +215,7 @@ function getcountrydel()	{
 
 	global $rows, $db;
 
-	$req = makewhere2();
+	$req = makewhere2(makewhere1());
 
 	if(isset($_GET['lang']))
 		$req .= " and lang=any(array[" . $_GET['lang'] . "])";
@@ -265,7 +263,7 @@ function getlangdel()	{
 
 	global $rows, $db;
 
-	$req = makewhere2();
+	$req = makewhere2(makewhere1());
 
 	if(isset($_GET['country']))
 		$req .= " and country=any(array[" . $_GET['country'] . "])";

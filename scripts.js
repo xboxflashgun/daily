@@ -274,7 +274,7 @@ function drawgametable()	{
 	.join( enter => {
 		var row = enter.append('tr');
 		var td = row.append('td').append('label');
-		td.append('input').attr("type", "checkbox");
+		td.append('input').attr("type", "checkbox").property("checked", d => (d in seltitleids));
 		td.append('span').text(d => gamenames[d].name ).attr("title", d => d);
 		row.append('td').text(d => gametable[d].players);
 		row.append('td').text(d => compact_perc(gametable[d].perc * 100,total));
@@ -282,6 +282,7 @@ function drawgametable()	{
 		row.append('td').text(d => gametable[d].langs);
 		row.attr('data-titleid', d => d);
 	}, update => {
+		update.select('input').property("checked", d => (d in seltitleids));
 		update.select('span').text(d => gamenames[d].name ).attr("title", d => d );
 		update.select('td:nth-child(2)').text(d => gametable[d].players);
 		update.select('td:nth-child(3)').text(d => compact_perc(gametable[d].perc * 100,total));
@@ -343,7 +344,7 @@ function drawgametable()	{
 		else
 			delete seltitleids[titleid];
 		checkboxes();
-		redraw(1);
+		redraw(0);
 		reloadsels();
 	});
 
