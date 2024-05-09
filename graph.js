@@ -14,13 +14,15 @@ var graph = [
 	}
 ];
 
+var ref = {};
+
 function regraph()	{
 
 	var pr = [];
 
 	graph.forEach( g => {
 		
-		pr.push(drawgraph(g.div, g.req));
+		pr.push(drawgraph(g));
 
 	});
 
@@ -28,29 +30,52 @@ function regraph()	{
 		.then( res => res.text() )
 		.then( res => {
 
-			console.log('ref');
+			res.split('\n').forEach( s => {
+
+				if(s.length === 0)
+					return;
+
+				var [ utime, players ] = s.split('\t');
+
+				ref[utime] = +players;
+
+			});
+
+			console.log(ref);
 
 		}));
 
 	Promise.all(pr)
 	.then( () => {
 
-		console.log('well done');
+		console.log(graph);
 
 	});
 
 
 }
 
-function drawgraph(div, what)	{
+function drawgraph(g)	{
 
 	var req = makereqstr();
 
-	return fetch("api/getcsv.php?f=getgraph&what=" + what + req)
+	return fetch("api/getcsv.php?f=getgraph&what=" + g.req + req)
 	.then( res => res.text() )
 	.then( res => {
 
-		console.log(div, what, req, res);
+		g.grapth = {};
+
+		res.split('\n').forEach( s => {
+
+			if(s.length === 0)
+				return;
+
+			var [ utime, id, players ] = s.split('\t');
+
+			g[utime] ??= {};
+			g[utime][id] = +players;
+
+		});
 
 	});
 
