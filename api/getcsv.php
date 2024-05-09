@@ -217,11 +217,6 @@ function getcountrydel()	{
 
 	$req = makewhere2(makewhere1());
 
-	if(isset($_GET['lang']))
-		$req .= " and lang=any(array[" . $_GET['lang'] . "])";
-	else
-		$req .= " and lang is not null";
-
 	$rows = pg_copy_to($db, "(
 
 select 
@@ -265,11 +260,6 @@ function getlangdel()	{
 
 	$req = makewhere2(makewhere1());
 
-	if(isset($_GET['country']))
-		$req .= " and country=any(array[" . $_GET['country'] . "])";
-	else
-		$req .= " and country is not null";
-
 	$rows = pg_copy_to($db, "(
 
 select 
@@ -285,7 +275,29 @@ group by cube(2)
 
 }
 
+function getgraph()	{
 
+	global $rows, $db;
+
+	$what = $_GET['what'];
+	if( ! isset($_
+	$req = makewhere2(makewhere1());
+
+	$rows = pg_copy_to($db, "(
+select 
+	utime,
+	$what,
+	sum(players) as players
+from
+	hourlytab
+where 
+	$req
+group by 1,cube(2)
+order by utime
+
+	)", chr(9));
+
+}
 
 
 
