@@ -207,7 +207,9 @@ function reloadsels()	{
 
 	Promise.all(pr)
 	.then( () => {
-		//
+
+		regraph();
+
 	});
 
 }

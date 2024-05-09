@@ -280,7 +280,6 @@ function getgraph()	{
 	global $rows, $db;
 
 	$what = $_GET['what'];
-	if( ! isset($_
 	$req = makewhere2(makewhere1());
 
 	$rows = pg_copy_to($db, "(
