@@ -282,6 +282,14 @@ function getgraph()	{
 	$what = $_GET['what'];
 	$req = makewhere2(makewhere1());
 
+	if( ! isset($_GET['langadd']) && ! isset($_GET['langdel']) )
+		$req .= " and lang is null";
+
+	if( ! isset($_GET['countryadd']) && ! isset($_GET['countrydel']))
+		$req .= " and country is null";
+
+	error_log("\nwhat: $what\nreq: $req\n");
+
 	$rows = pg_copy_to($db, "(
 select 
 	utime,
@@ -298,7 +306,26 @@ order by utime
 
 }
 
+function getgraphref()	{	# reference: total in this hour
 
+	global $rows, $db;
+
+	$rows = pg_copy_to($db, "(
+
+select 
+	utime,
+	players
+from
+	hourlytab 
+where 
+	country is null 
+	and lang is null
+	and titleid is null
+order by utime
+
+	)", chr(9));
+
+}
 
 
 
