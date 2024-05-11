@@ -1,3 +1,4 @@
+var utimemin, utimemax;
 
 var graph = [
 	{
@@ -19,6 +20,9 @@ var ref = {};
 function regraph()	{
 
 	var pr = [];
+
+	utimemin = undefined;
+	utimemax = undefined;
 
 	graph.forEach( g => {
 		
@@ -87,7 +91,7 @@ function drawgraph(g)	{
 	g.yAxis = d3.axisLeft().scale(g.y);
 
 	svg.append("g")
-	.attr("class","myYaxis");
+	.attr("class","YAxis");
 
 	console.log(g);
 	graphupdate(g);
@@ -98,22 +102,39 @@ function graphupdate(g)	{
 
 	var svg = d3.select("#" + g.div + "graph svg");
 
-	g.x.domain([0, d3.max(Object.keys(g.graph), function(d) { return d }) ]);
+	g.x.domain([ utimemin, utimemax ]);
 
 	svg.selectAll(".XAxis")
 		.transition()
 		.duration(3000)
 		.call(g.xAxis);
 
-	g.y.domain([0, d3.max(Object.keys(g.graph), d => d3.max(Object.keys(g.graph[d]), t => g.graph[d][t] ) ) ] );
+	g.y.domain([ g.playersmin, g.playersmax ] );
 	svg.selectAll(".YAxis")
 		.transition()
 		.duration(3000)
 		.call(g.yAxis);
 
-	Object.keys(g.graph).forEach( t => {
+	Object.keys(g.graph).forEach(t => {
 
-		console.log(t);
+		var u = svg.selectAll(".lineGraph")
+				.data( [ Object.keys(g.graph[t]) ] );
+
+		// const line = d3.line().x( d => g.x(+d) ).y( d => g.y(g.graph[t][+d]) );
+		// svg.append("path").attr("d", line(Object.keys(g.graph[t])));
+
+		u.join( enter => {
+			enter.append("path")
+			.classed("lineGraph", true)
+			.transition()
+			.duration(3000)
+			.attr("d", 
+				d3.line( (d) => g.x(+d), (d) => g.y(g.graph[t][+d]) ) 
+			)
+			.attr("stroke", "red")
+			.attr("stroke-width", 1.5)
+			.attr("fill", "none");
+		});
 
 	});
 
@@ -128,6 +149,8 @@ function readgraph(g)	{
 	.then( res => {
 
 		g.graph = {};
+		g.playersmax = undefined;
+		g.playersmin = undefined;
 
 		res.split('\n').forEach( s => {
 
@@ -136,8 +159,17 @@ function readgraph(g)	{
 
 			var [ utime, id, players ] = s.split('\t');
 
-			g.graph[utime] ??= {};
-			g.graph[utime][id] = +players;
+			players = +players;
+			utime = +utime;
+
+			g.graph[id] ??= {};
+			g.graph[id][utime] = players;
+
+			utimemax = d3.max([utimemax, utime]);
+			utimemin = d3.min([utimemin, utime]);
+
+			g.playersmax = d3.max( [ g.playersmax, players ] );
+			g.playersmin = d3.min( [ g.playersmin, players ] );
 
 		});
 
