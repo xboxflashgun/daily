@@ -109,7 +109,7 @@ function graphupdate(g)	{
 		.duration(3000)
 		.call(g.xAxis);
 
-	g.y.domain([ g.playersmin, g.playersmax ] );
+	g.y.domain([ 0, g.playersmax ] );
 	svg.selectAll(".YAxis")
 		.transition()
 		.duration(3000)
@@ -150,7 +150,6 @@ function readgraph(g)	{
 
 		g.graph = {};
 		g.playersmax = undefined;
-		g.playersmin = undefined;
 
 		res.split('\n').forEach( s => {
 
@@ -169,7 +168,6 @@ function readgraph(g)	{
 			utimemin = d3.min([utimemin, utime]);
 
 			g.playersmax = d3.max( [ g.playersmax, players ] );
-			g.playersmin = d3.min( [ g.playersmin, players ] );
 
 		});
 
