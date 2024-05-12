@@ -77,23 +77,25 @@ function drawgraph(g)	{
 	var width = 930 - margin.left - margin.right;
 	var height = 200 - margin.top - margin.bottom;
 
-	svg.append("g")
-	.attr("transform", `translate(${margin.left},${margin.top})`);
+	if( svg.select(".XAxis").empty() )	{
+	
+		svg.append("g")
+		.attr("transform", `translate(${margin.left},${margin.top})`);
+
+		svg.append("g")
+		.attr("transform", `translate(0, ${height})`)
+		.attr("class", "XAxis");
+
+		svg.append("g")
+		.attr("class","YAxis");
+	}
 
 	g.x = d3.scaleLinear().range([0,width]);
 	g.xAxis = d3.axisBottom().scale(g.x);
 
-	svg.append("g")
-	.attr("transform", `translate(0, ${height})`)
-	.attr("class", "XAxis");
-
 	g.y = d3.scaleLinear().range([height, 0]);
 	g.yAxis = d3.axisLeft().scale(g.y);
 
-	svg.append("g")
-	.attr("class","YAxis");
-
-	console.log(g);
 	graphupdate(g);
 
 }
@@ -120,8 +122,7 @@ function graphupdate(g)	{
 		var u = svg.selectAll(".lineGraph")
 				.data( [ Object.keys(g.graph[t]) ] );
 
-		// const line = d3.line().x( d => g.x(+d) ).y( d => g.y(g.graph[t][+d]) );
-		// svg.append("path").attr("d", line(Object.keys(g.graph[t])));
+		console.log(t);
 
 		u.join( enter => {
 			enter.append("path")
@@ -129,11 +130,24 @@ function graphupdate(g)	{
 			.transition()
 			.duration(3000)
 			.attr("d", 
-				d3.line( (d) => g.x(+d), (d) => g.y(g.graph[t][+d]) ) 
+				d3.line( d => g.x(+d), d => g.y(g.graph[t][+d]) ) 
 			)
 			.attr("stroke", "red")
 			.attr("stroke-width", 1.5)
 			.attr("fill", "none");
+		}, update => {
+			update.select("path")
+			.transition()
+			.duration(3000)
+			.attr("d",
+				d3.line( d => g.x(+d), d => g.y(g.graph[t][+d]) )
+			)
+			.attr("stroke", "green")
+			.attr("stroke-width", 1.5)
+			.attr("fill", "none");
+			console.log(update);
+		}, exit => {
+			exit.remove();
 		});
 
 	});
@@ -150,6 +164,8 @@ function readgraph(g)	{
 
 		g.graph = {};
 		g.playersmax = undefined;
+
+		console.log("api/getcsv.php?f=getgraph&what=" + g.req + req);
 
 		res.split('\n').forEach( s => {
 
