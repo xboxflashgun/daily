@@ -107,45 +107,49 @@ function graphupdate(g)	{
 	g.x.domain([ utimemin, utimemax ]);
 
 	svg.selectAll(".XAxis")
-		.transition()
-		.duration(3000)
+		// .transition()
+		// .duration(3000)
 		.call(g.xAxis);
 
 	g.y.domain([ 0, g.playersmax ] );
 	svg.selectAll(".YAxis")
-		.transition()
-		.duration(3000)
+		// .transition()
+		// .duration(3000)
 		.call(g.yAxis);
 
 	Object.keys(g.graph).forEach(t => {
 
-		var u = svg.selectAll(".lineGraph")
+		var tt = (t === '\\N') ? 'all' : t;
+
+		var u = svg.selectAll(".lineGraph" + tt)
 				.data( [ Object.keys(g.graph[t]) ] );
 
-		console.log(t);
+		console.log(t, g.graph[t]);
 
 		u.join( enter => {
 			enter.append("path")
-			.classed("lineGraph", true)
-			.transition()
-			.duration(3000)
+			.classed("lineGraph"+tt, true)
+			// .transition()
+			// .duration(3000)
 			.attr("d", 
 				d3.line( d => g.x(+d), d => g.y(g.graph[t][+d]) ) 
 			)
 			.attr("stroke", "red")
 			.attr("stroke-width", 1.5)
 			.attr("fill", "none");
+			console.log('enter', t, enter);
 		}, update => {
 			update.select("path")
-			.transition()
-			.duration(3000)
+			.classed("lineGraph"+tt, true)
+			// .transition()
+			// .duration(3000)
 			.attr("d",
 				d3.line( d => g.x(+d), d => g.y(g.graph[t][+d]) )
 			)
 			.attr("stroke", "green")
 			.attr("stroke-width", 1.5)
 			.attr("fill", "none");
-			console.log(update);
+			console.log('update', t, update);
 		}, exit => {
 			exit.remove();
 		});
