@@ -79,8 +79,11 @@ function drawgraph(g)	{
 
 	if( svg.select(".XAxis").empty() )	{
 	
-		svg.append("g")
-		.attr("transform", `translate(${margin.left},${margin.top})`);
+		svg
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+		.append("g")
+			.attr("transform", `translate(${margin.left},${margin.top})`);
 
 		svg.append("g")
 		.attr("transform", `translate(0, ${height})`)
@@ -103,6 +106,10 @@ function drawgraph(g)	{
 function graphupdate(g)	{
 
 	var svg = d3.select("#" + g.div + "graph svg");
+
+	g.items ??= [];
+	g.items = g.items.filter( i => ! Object.keys(g.graph).includes(i) );
+	console.log('to delete: ', g.items);
 
 	g.x.domain([ utimemin, utimemax ]);
 
@@ -151,10 +158,18 @@ function graphupdate(g)	{
 			.attr("fill", "none");
 			console.log('update', t, update);
 		}, exit => {
-			exit.remove();
+			exit.select("path").remove();
 		});
 
 	});
+
+	g.items.forEach( t => {
+
+		svg.selectAll(".lineGraph" + t).remove();
+
+	});
+
+	g.items = Object.keys(g.graph);
 
 }
 
