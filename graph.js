@@ -45,8 +45,6 @@ function regraph()	{
 
 			});
 
-			console.log(ref);
-
 		}));
 
 	Promise.all(pr)
@@ -90,6 +88,7 @@ function drawgraph(g)	{
 		.attr("class", "XAxis");
 
 		svg.append("g")
+		.attr("transform", `translate(${width},0)`)
 		.attr("class","YAxis");
 	}
 
@@ -109,7 +108,6 @@ function graphupdate(g)	{
 
 	g.items ??= [];
 	g.items = g.items.filter( i => ! Object.keys(g.graph).includes(i) );
-	console.log('to delete: ', g.items);
 
 	g.x.domain([ utimemin, utimemax ]);
 
@@ -124,14 +122,19 @@ function graphupdate(g)	{
 		// .duration(3000)
 		.call(g.yAxis);
 
+	g.color = d3.scaleOrdinal(Object.keys(g.graph), d3.schemeObservable10);
+
 	Object.keys(g.graph).forEach(t => {
 
 		var tt = (t === '\\N') ? 'all' : t;
+		
+		if(tt === 'all' && Object.keys(g.graph).length > 1)
+			return;
+
+		console.log('draw ', tt, ' num: ', Object.keys(g.graph).length);
 
 		var u = svg.selectAll(".lineGraph" + tt)
 				.data( [ Object.keys(g.graph[t]) ] );
-
-		console.log(t, g.graph[t]);
 
 		u.join( enter => {
 			enter.append("path")
@@ -141,10 +144,9 @@ function graphupdate(g)	{
 			.attr("d", 
 				d3.line( d => g.x(+d), d => g.y(g.graph[t][+d]) ) 
 			)
-			.attr("stroke", "red")
+			.attr("stroke", d => g.color(d) )
 			.attr("stroke-width", 1.5)
 			.attr("fill", "none");
-			console.log('enter', t, enter);
 		}, update => {
 			update.select("path")
 			.classed("lineGraph"+tt, true)
@@ -156,12 +158,14 @@ function graphupdate(g)	{
 			.attr("stroke", "green")
 			.attr("stroke-width", 1.5)
 			.attr("fill", "none");
-			console.log('update', t, update);
 		}, exit => {
 			exit.select("path").remove();
 		});
 
 	});
+
+	if(Object.keys(g.graph).length > 1)
+		svg.selectAll(".lineGraph" + "all").remove();
 
 	g.items.forEach( t => {
 
