@@ -106,9 +106,6 @@ function graphupdate(g)	{
 
 	var svg = d3.select("#" + g.div + "graph svg");
 
-	g.items ??= [];
-	g.items = g.items.filter( i => ! Object.keys(g.graph).includes(i) );
-
 	g.x.domain([ utimemin, utimemax ]);
 
 	svg.selectAll(".XAxis")
@@ -116,64 +113,44 @@ function graphupdate(g)	{
 		// .duration(3000)
 		.call(g.xAxis);
 
-	g.y.domain([ 0, g.playersmax ] );
+	g.y.domain([ 0, d3.max( g.graph, d => d.players) ] );
 	svg.selectAll(".YAxis")
 		// .transition()
 		// .duration(3000)
 		.call(g.yAxis);
 
-	g.color = d3.scaleOrdinal(Object.keys(g.graph), d3.schemeObservable10);
+	const grouped = d3.group( g.graph, d => d.id );
 
-	Object.keys(g.graph).forEach(t => {
+	const color = 
 
-		var tt = (t === '\\N') ? 'all' : t;
-		
-		if(tt === 'all' && Object.keys(g.graph).length > 1)
-			return;
-
-		console.log('draw ', tt, ' num: ', Object.keys(g.graph).length);
-
-		var u = svg.selectAll(".lineGraph" + tt)
-				.data( [ Object.keys(g.graph[t]) ] );
-
-		u.join( enter => {
-			enter.append("path")
-			.classed("lineGraph"+tt, true)
-			// .transition()
-			// .duration(3000)
-			.attr("d", 
-				d3.line( d => g.x(+d), d => g.y(g.graph[t][+d]) ) 
-			)
-			.attr("stroke", d => g.color(d) )
-			.attr("stroke-width", 1.5)
-			.attr("fill", "none");
-		}, update => {
-			update.select("path")
-			.classed("lineGraph"+tt, true)
-			// .transition()
-			// .duration(3000)
-			.attr("d",
-				d3.line( d => g.x(+d), d => g.y(g.graph[t][+d]) )
-			)
-			.attr("stroke", "green")
-			.attr("stroke-width", 1.5)
-			.attr("fill", "none");
-		}, exit => {
-			exit.select("path").remove();
-		});
-
-	});
-
-	if(Object.keys(g.graph).length > 1)
-		svg.selectAll(".lineGraph" + "all").remove();
-
-	g.items.forEach( t => {
-
-		svg.selectAll(".lineGraph" + t).remove();
-
-	});
-
-	g.items = Object.keys(g.graph);
+	svg.selectAll('.line')
+	.data(grouped)
+	.join(enter => {
+		enter.append("path")
+		.classed('line', true)
+		.attr("fill", "none")
+		.attr("stroke", "red")
+		.attr("stroke-width", 1.5)
+		.attr("d", d => d3.line()
+			.x( d => g.x(d.utime) )
+			.y( d => g.y(d.players) )
+			(d[1])
+		)
+	}, update => {
+		update.attr("fill", "none")
+		.attr("stroke", "red")
+		.attr("stroke-width", 1.5)
+		.attr("d", d => d3.line()
+			.x( d => g.x(d.utime) )
+			.y( d => g.y(d.players) )
+			(d[1])
+		)
+	}, exit => {
+		// exit.remove();
+		// exit.selectAll("path").remove();
+		d3.select(exit).remove();
+	}
+	);
 
 }
 
@@ -185,10 +162,9 @@ function readgraph(g)	{
 	.then( res => res.text() )
 	.then( res => {
 
-		g.graph = {};
-		g.playersmax = undefined;
+		g.graph = [];
 
-		console.log("api/getcsv.php?f=getgraph&what=" + g.req + req);
+		// console.log("api/getcsv.php?f=getgraph&what=" + g.req + req);
 
 		res.split('\n').forEach( s => {
 
@@ -197,16 +173,10 @@ function readgraph(g)	{
 
 			var [ utime, id, players ] = s.split('\t');
 
-			players = +players;
-			utime = +utime;
-
-			g.graph[id] ??= {};
-			g.graph[id][utime] = players;
+			g.graph.push( { utime: +utime, id: (id === '\\N') ? 'all' : id, players: +players } );
 
 			utimemax = d3.max([utimemax, utime]);
 			utimemin = d3.min([utimemin, utime]);
-
-			g.playersmax = d3.max( [ g.playersmax, players ] );
 
 		});
 
