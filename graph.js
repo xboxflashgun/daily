@@ -119,17 +119,20 @@ function graphupdate(g)	{
 		// .duration(3000)
 		.call(g.yAxis);
 
-	const grouped = d3.group( g.graph, d => d.id );
+	var lines = (new Set(g.graph.map( d => d.id )).size);
+	const grouped = d3.group( g.graph.filter( d => (lines > 1) ? d.id !== 'all' : true), d => d.id );
 
-	const color = 
+	console.log(grouped);
+	
+	const color = d3.scaleOrdinal(Array.from(grouped.keys()).sort(), d3.schemeObservable10);
 
 	svg.selectAll('.line')
 	.data(grouped)
 	.join(enter => {
 		enter.append("path")
-		.classed('line', true)
+		.attr("class", "line")
 		.attr("fill", "none")
-		.attr("stroke", "red")
+		.attr("stroke", d => color(d[0]))
 		.attr("stroke-width", 1.5)
 		.attr("d", d => d3.line()
 			.x( d => g.x(d.utime) )
@@ -138,7 +141,7 @@ function graphupdate(g)	{
 		)
 	}, update => {
 		update.attr("fill", "none")
-		.attr("stroke", "red")
+		.attr("stroke", d => color(d[0]))
 		.attr("stroke-width", 1.5)
 		.attr("d", d => d3.line()
 			.x( d => g.x(d.utime) )
@@ -146,9 +149,7 @@ function graphupdate(g)	{
 			(d[1])
 		)
 	}, exit => {
-		// exit.remove();
-		// exit.selectAll("path").remove();
-		d3.select(exit).remove();
+		exit.remove();
 	}
 	);
 
