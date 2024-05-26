@@ -113,17 +113,16 @@ function graphupdate(g)	{
 		// .duration(3000)
 		.call(g.xAxis);
 
-	g.y.domain([ 0, d3.max( g.graph, d => d.players) ] );
+	var lines = (new Set(g.graph.map( d => d.id )).size);
+	const grouped = d3.group( g.graph.filter( d => (lines > 1) ? d.id !== 'all' : true), d => d.id );
+
+	g.y.domain([ 0, d3.max( g.graph.filter( d => (lines > 1) ? d.id !== 'all' : true), d => d.players ) ] );
 	svg.selectAll(".YAxis")
 		// .transition()
 		// .duration(3000)
 		.call(g.yAxis);
 
-	var lines = (new Set(g.graph.map( d => d.id )).size);
-	const grouped = d3.group( g.graph.filter( d => (lines > 1) ? d.id !== 'all' : true), d => d.id );
 
-	console.log(grouped);
-	
 	const color = d3.scaleOrdinal(Array.from(grouped.keys()).sort(), d3.schemeObservable10);
 
 	svg.selectAll('.line')
